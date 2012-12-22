@@ -1,9 +1,25 @@
-// Copyright 2012 The Ogg Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
+/********************************************************************
+ *                                                                  *
+ * THIS FILE IS PART OF THE Ogg CONTAINER SOURCE CODE.              *
+ * USE, DISTRIBUTION AND REPRODUCTION OF THIS LIBRARY SOURCE IS     *
+ * GOVERNED BY A BSD-STYLE SOURCE LICENSE INCLUDED WITH THIS SOURCE *
+ * IN 'COPYING'. PLEASE READ THESE TERMS BEFORE DISTRIBUTING.       *
+ *                                                                  *
+ * THE OggVorbis SOURCE CODE IS (C) COPYRIGHT 1994-2010             *
+ * by the Xiph.Org Foundation http://www.xiph.org/                  *
+ *                                                                  *
+ ********************************************************************
 
-// Go implementation of the libogg 1.3.0 container format library. See www.xiph.org/ogg 
-// for more info about libogg.
+ function: code raw packets into framed OggSquish stream and
+           decode Ogg streams back into raw packets
+ last mod: $Id: framing.c 18052 2011-08-04 17:57:02Z giles $
+
+ note: The CRC code is directly derived from public domain code by
+ Ross Williams (ross@guest.adelaide.edu.au).  See docs/framing.html
+ for details.
+
+ ********************************************************************/
+
 package ogg
 
 import (

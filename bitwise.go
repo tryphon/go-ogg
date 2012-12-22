@@ -1,8 +1,22 @@
-// Copyright 2012 The Ogg Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style
-// license that can be found in the LICENSE file.
-
 package ogg
+
+/********************************************************************
+ *                                                                  *
+ * THIS FILE IS PART OF THE Ogg CONTAINER SOURCE CODE.              *
+ * USE, DISTRIBUTION AND REPRODUCTION OF THIS LIBRARY SOURCE IS     *
+ * GOVERNED BY A BSD-STYLE SOURCE LICENSE INCLUDED WITH THIS SOURCE *
+ * IN 'COPYING'. PLEASE READ THESE TERMS BEFORE DISTRIBUTING.       *
+ *                                                                  *
+ * THE OggVorbis SOURCE CODE IS (C) COPYRIGHT 1994-2010             *
+ * by the Xiph.Org Foundation http://www.xiph.org/                  *
+ *                                                                  *
+ ********************************************************************
+
+  function: packing variable sized words into an octet stream
+  last mod: $Id: bitwise.c 18051 2011-08-04 17:56:39Z giles $
+
+ ********************************************************************/
+
 
 // function: Packing variable sized words into an octet stream
 

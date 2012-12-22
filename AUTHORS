@@ -1,14 +1,7 @@
-# This is the official list of Ogg authors for copyright purposes.
-# This file is distinct from the CONTRIBUTORS files.
-# See the latter for an explanation.
+Monty <monty@xiph.org>
+Greg Maxwell <greg@xiph.org>
+Ralph Giles <giles@xiph.org>
+Cristian Adam <cristian.adam@gmail.com>
+Tim Terriberry <tterribe@xiph.org>
 
-# Names should be added to this file as
-# Name or Organization <email address>
-# The email address is not required for organizations.
-
-# Please keep the list sorted.
-
-
-Gerard van de Schoot <gvdschoot@gmail.com>
-
-
+and the rest of the Xiph.Org Foundation.
