@@ -1,4 +1,4 @@
-# ogg
+# ogg [![Build Status](https://travis-ci.org/grd/ogg.png)](https://travis-ci.org/grd/ogg)
 
 Pure [Go](http://www.golang.org) implementation of the libogg 1.3.0 container format library. See [www.xiph.org/ogg] for more info about libogg.
 
