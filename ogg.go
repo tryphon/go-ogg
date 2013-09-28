@@ -748,7 +748,7 @@ func (ot *StreamState) PageIn(og *Page) error {
 			ot.bodyReturned = 0
 		}
 
-		if lr == 1 {
+		if lr > 0 {
 			// segment table
 			if (ot.lacingFill - lr) != 0 {
 				copy(ot.lacingVals, ot.lacingVals[lr:lr+ot.lacingFill])
