@@ -1,21 +1,21 @@
 package ogg
 
 /********************************************************************
- *                                                                  *
- * THIS FILE IS PART OF THE Ogg CONTAINER SOURCE CODE.              *
- * USE, DISTRIBUTION AND REPRODUCTION OF THIS LIBRARY SOURCE IS     *
- * GOVERNED BY A BSD-STYLE SOURCE LICENSE INCLUDED WITH THIS SOURCE *
- * IN 'COPYING'. PLEASE READ THESE TERMS BEFORE DISTRIBUTING.       *
- *                                                                  *
- * THE OggVorbis SOURCE CODE IS (C) COPYRIGHT 1994-2010             *
- * by the Xiph.Org Foundation http://www.xiph.org/                  *
- *                                                                  *
- ********************************************************************
+*                                                                  *
+* THIS FILE IS PART OF THE Ogg CONTAINER SOURCE CODE.              *
+* USE, DISTRIBUTION AND REPRODUCTION OF THIS LIBRARY SOURCE IS     *
+* GOVERNED BY A BSD-STYLE SOURCE LICENSE INCLUDED WITH THIS SOURCE *
+* IN 'COPYING'. PLEASE READ THESE TERMS BEFORE DISTRIBUTING.       *
+*                                                                  *
+* THE OggVorbis SOURCE CODE IS (C) COPYRIGHT 1994-2010             *
+* by the Xiph.Org Foundation http://www.xiph.org/                  *
+*                                                                  *
+********************************************************************
 
-  function: packing variable sized words into an octet stream
-  last mod: $Id: bitwise.c 18051 2011-08-04 17:56:39Z giles $
+ function: packing variable sized words into an octet stream
+ last mod: $Id: bitwise.c 18051 2011-08-04 17:56:39Z giles $
 
- ********************************************************************/
+********************************************************************/
 
 import (
 	"fmt"
@@ -329,8 +329,8 @@ func TestBitwise(t *testing.T) {
 
 	// lazy, cut-n-paste retest with MSb packing
 
-	// Test read/write together 
-	// Later we test against pregenerated bitstreams 
+	// Test read/write together
+	// Later we test against pregenerated bitstreams
 	outPb.WriteInitB()
 
 	fmt.Fprintf(os.Stderr, "\nSmall preclipped packing (MSb): ")

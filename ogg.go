@@ -1,24 +1,24 @@
 /********************************************************************
- *                                                                  *
- * THIS FILE IS PART OF THE Ogg CONTAINER SOURCE CODE.              *
- * USE, DISTRIBUTION AND REPRODUCTION OF THIS LIBRARY SOURCE IS     *
- * GOVERNED BY A BSD-STYLE SOURCE LICENSE INCLUDED WITH THIS SOURCE *
- * IN 'COPYING'. PLEASE READ THESE TERMS BEFORE DISTRIBUTING.       *
- *                                                                  *
- * THE OggVorbis SOURCE CODE IS (C) COPYRIGHT 1994-2010             *
- * by the Xiph.Org Foundation http://www.xiph.org/                  *
- *                                                                  *
- ********************************************************************
+*                                                                  *
+* THIS FILE IS PART OF THE Ogg CONTAINER SOURCE CODE.              *
+* USE, DISTRIBUTION AND REPRODUCTION OF THIS LIBRARY SOURCE IS     *
+* GOVERNED BY A BSD-STYLE SOURCE LICENSE INCLUDED WITH THIS SOURCE *
+* IN 'COPYING'. PLEASE READ THESE TERMS BEFORE DISTRIBUTING.       *
+*                                                                  *
+* THE OggVorbis SOURCE CODE IS (C) COPYRIGHT 1994-2010             *
+* by the Xiph.Org Foundation http://www.xiph.org/                  *
+*                                                                  *
+********************************************************************
 
- function: code raw packets into framed OggSquish stream and
-           decode Ogg streams back into raw packets
- last mod: $Id: framing.c 18052 2011-08-04 17:57:02Z giles $
+function: code raw packets into framed OggSquish stream and
+          decode Ogg streams back into raw packets
+last mod: $Id: framing.c 18052 2011-08-04 17:57:02Z giles $
 
- note: The CRC code is directly derived from public domain code by
- Ross Williams (ross@guest.adelaide.edu.au).  See docs/framing.html
- for details.
+note: The CRC code is directly derived from public domain code by
+Ross Williams (ross@guest.adelaide.edu.au).  See docs/framing.html
+for details.
 
- ********************************************************************/
+********************************************************************/
 
 package ogg
 
@@ -243,14 +243,14 @@ func (ot *StreamState) lacingExpand(needed int) {
 	}
 }
 
-// ChecksumSet the page 
+// ChecksumSet the page
 // Direct table CRC; note that this will be faster in the future if we
 // perform the checksum simultaneously with other copies
 func (og *Page) ChecksumSet() {
 	if og != nil {
 		var crc_reg uint32
 
-		// safety; needed for API behavior, but not framing code 
+		// safety; needed for API behavior, but not framing code
 		og.Header[22] = 0
 		og.Header[23] = 0
 		og.Header[24] = 0
@@ -264,9 +264,9 @@ func (og *Page) ChecksumSet() {
 		}
 
 		og.Header[22] = byte(crc_reg)
-		og.Header[23] = byte(crc_reg>>8)
-		og.Header[24] = byte(crc_reg>>16)
-		og.Header[25] = byte(crc_reg>>24)
+		og.Header[23] = byte(crc_reg >> 8)
+		og.Header[24] = byte(crc_reg >> 16)
+		og.Header[25] = byte(crc_reg >> 24)
 	}
 }
 
@@ -295,20 +295,20 @@ func (ot *StreamState) IovecIn(iov [][]byte, eos bool, granulepos int64) error {
 		ot.bodyReturned = 0
 	}
 
-	// make sure we have the buffer storage 
+	// make sure we have the buffer storage
 	ot.bodyExpand(Bytes)
 	ot.lacingExpand(lacing_vals)
 
 	// Copy in the submitted packet.  Yes, the copy is a waste; this is
 	// the liability of overly clean abstraction for the time being. It
 	// will actually be fairly easy to eliminate the extra copy in the
-	// future 
-	for i = range(iov) {
+	// future
+	for i = range iov {
 		copy(ot.bodyData[ot.bodyFill:], iov[i])
 		ot.bodyFill += len(iov[i])
 	}
 
-	// Store lacing vals for this packet 
+	// Store lacing vals for this packet
 	for i = 0; i < lacing_vals-1; i++ {
 		ot.lacingVals[int(ot.lacingFill)+i] = 255
 		ot.granuleVals[int(ot.lacingFill)+i] = ot.granulePos
@@ -317,12 +317,12 @@ func (ot *StreamState) IovecIn(iov [][]byte, eos bool, granulepos int64) error {
 	ot.granuleVals[int(ot.lacingFill)+i] = granulepos
 	ot.granulePos = granulepos
 
-	// flag the first segment as the beginning of the packet 
+	// flag the first segment as the beginning of the packet
 	ot.lacingVals[ot.lacingFill] |= 0x100
 
 	ot.lacingFill += lacing_vals
 
-	// for the sake of completeness 
+	// for the sake of completeness
 	ot.packetNo++
 
 	if eos == true {
@@ -354,12 +354,12 @@ func (ot *StreamState) flushI(og *Page, force bool, nfill int) bool {
 		return false
 	}
 
-	// construct a page 
-	// decide how many segments to include 
+	// construct a page
+	// decide how many segments to include
 
 	// If this is the initial header case, the first page must only include
-	// the initial header packet 
-	if ot.bos == false { // 'initial header page' case 
+	// the initial header packet
+	if ot.bos == false { // 'initial header page' case
 		granule_pos = 0
 		for vals = 0; vals < maxvals; vals++ {
 			if (ot.lacingVals[vals] & 0x0ff) < 255 {
@@ -376,7 +376,7 @@ func (ot *StreamState) flushI(og *Page, force bool, nfill int) bool {
 		//    are large.
 		// These are not necessary behaviors, just 'always better than naive flushing'
 		// without requiring an application to explicitly request a specific optimized
-		// behavior. We'll want an explicit behavior setup pathway eventually as well. 
+		// behavior. We'll want an explicit behavior setup pathway eventually as well.
 
 		packets_done := 0
 		packet_just_done := 0
@@ -403,34 +403,34 @@ func (ot *StreamState) flushI(og *Page, force bool, nfill int) bool {
 		return false
 	}
 
-	// construct the header in temp storage 
+	// construct the header in temp storage
 	copy(ot.header[0:4], "OggS")
 
-	// stream structure version 
+	// stream structure version
 	ot.header[4] = 0x00
 
-	// continued packet flag? 
+	// continued packet flag?
 	ot.header[5] = 0x00
 	if (ot.lacingVals[0] & 0x100) == 0 {
 		ot.header[5] |= 0x01
 	}
-	// first page flag? 
+	// first page flag?
 	if ot.bos == false {
 		ot.header[5] |= 0x02
 	}
-	// last page flag? 
+	// last page flag?
 	if ot.eos && ot.lacingFill == vals {
 		ot.header[5] |= 0x04
 	}
 	ot.bos = true
 
-	// 64 bits of PCM position 
+	// 64 bits of PCM position
 	for i = 6; i < 14; i++ {
 		ot.header[i] = byte(granule_pos)
 		granule_pos >>= 8
 	}
 
-	// 32 bits of stream serial number 
+	// 32 bits of stream serial number
 	serialno := ot.SerialNo
 	for i = 14; i < 18; i++ {
 		ot.header[i] = byte(serialno)
@@ -438,11 +438,11 @@ func (ot *StreamState) flushI(og *Page, force bool, nfill int) bool {
 	}
 
 	// 32 bits of page counter (we have both counter and page header
-	// because this val can roll over) 
+	// because this val can roll over)
 	if ot.pageNo == -1 {
 		// because someone called Reset; this would be a
 		// strange thing to do in an encode stream, but it has
-		// plausible uses 
+		// plausible uses
 		ot.pageNo = 0
 	}
 
@@ -454,34 +454,34 @@ func (ot *StreamState) flushI(og *Page, force bool, nfill int) bool {
 		pageno >>= 8
 	}
 
-	// zero for computation; filled in later 
+	// zero for computation; filled in later
 	ot.header[22] = 0
 	ot.header[23] = 0
 	ot.header[24] = 0
 	ot.header[25] = 0
 
-	// segment table 
+	// segment table
 	ot.header[26] = byte(vals)
 	for i = 0; i < vals; i++ {
 		ot.header[i+27] = byte(ot.lacingVals[i])
 		bodyBytes += int(ot.header[i+27])
 	}
 
-	// set pointers in the Page struct 
+	// set pointers in the Page struct
 	og.Header = ot.header[0 : vals+27]
 	ot.headerFill = vals + 27
 	og.Body = ot.bodyData[ot.bodyReturned : ot.bodyReturned+bodyBytes]
 
-	// advance the lacing data and set the body_returned pointer 
+	// advance the lacing data and set the body_returned pointer
 	ot.lacingFill -= vals
 	copy(ot.lacingVals, ot.lacingVals[vals:vals+ot.lacingFill])
 	copy(ot.granuleVals, ot.granuleVals[vals:vals+ot.lacingFill])
 	ot.bodyReturned += bodyBytes
 
-	// calculate the checksum 
+	// calculate the checksum
 	og.ChecksumSet()
 
-	// done 
+	// done
 	return true
 }
 
@@ -516,7 +516,7 @@ func (ot *StreamState) PageOut(og *Page) bool {
 	var force bool
 
 	if (ot.eos && ot.lacingFill != 0) || // 'were done, now flush' case
-		(ot.lacingFill != 0 && !ot.bos) { // 'initial header page' case 
+		(ot.lacingFill != 0 && !ot.bos) { // 'initial header page' case
 		force = true
 	}
 
@@ -529,8 +529,8 @@ func (ot *StreamState) PageOut(og *Page) bool {
 func (ot *StreamState) PageOutFill(og *Page, nfill int) bool {
 	var force bool
 
-	if (ot.eos && ot.lacingFill == 1) || // 'were done, now flush' case 
-		(ot.lacingFill == 1 && !ot.bos) { // 'initial header page' case 
+	if (ot.eos && ot.lacingFill == 1) || // 'were done, now flush' case
+		(ot.lacingFill == 1 && !ot.bos) { // 'initial header page' case
 		force = true
 	}
 
@@ -604,7 +604,7 @@ func (oy *SyncState) PageSeek(og *Page) int {
 		}
 
 		headerbytes = int(page[26]) + 27
-		if Bytes < headerbytes { 
+		if Bytes < headerbytes {
 			// not enough for header + seg table
 			return 0
 		}
@@ -638,7 +638,7 @@ func (oy *SyncState) PageSeek(og *Page) int {
 		log.Body = page[oy.headerBytes : oy.headerBytes+oy.bodyBytes]
 		log.ChecksumSet()
 
-		// Compare 
+		// Compare
 		if bytes.Equal(chksum, page[22:26]) == false {
 			// D'oh. Mismatch! Corrupt page (or miscapture and not a page at all)
 			// replace the computed checksum with the one actually read in
@@ -698,11 +698,11 @@ func (oy *SyncState) PageOut(og *Page) int {
 	for {
 		ret := oy.PageSeek(og)
 		if ret > 0 {
-			// have a page 
+			// have a page
 			return 1
 		}
 		if ret == 0 {
-			// need more data 
+			// need more data
 			return 0
 		}
 
@@ -712,7 +712,7 @@ func (oy *SyncState) PageOut(og *Page) int {
 			return -1
 		}
 
-		// loop. keep looking 
+		// loop. keep looking
 
 	}
 
@@ -734,12 +734,12 @@ func (ot *StreamState) PageIn(og *Page) error {
 	pageno := og.PageNo()
 	segments := int(header[26])
 
-	// clean up 'returned data' 
+	// clean up 'returned data'
 	{
 		lr := ot.lacingReturned
 		br := ot.bodyReturned
 
-		// body data 
+		// body data
 		if br != 0 {
 			ot.bodyFill -= br
 			if ot.bodyFill != 0 {
@@ -749,7 +749,7 @@ func (ot *StreamState) PageIn(og *Page) error {
 		}
 
 		if lr == 1 {
-			// segment table 
+			// segment table
 			if (ot.lacingFill - lr) != 0 {
 				copy(ot.lacingVals, ot.lacingVals[lr:lr+ot.lacingFill])
 				copy(ot.granuleVals, ot.granuleVals[lr:lr+ot.lacingFill])
@@ -760,7 +760,7 @@ func (ot *StreamState) PageIn(og *Page) error {
 		}
 	}
 
-	// check the serial number 
+	// check the serial number
 	if ot.SerialNo != og.SerialNo() {
 		return errors.New("Serial numbers don't match in func PageIn()")
 	}
@@ -770,16 +770,16 @@ func (ot *StreamState) PageIn(og *Page) error {
 
 	ot.lacingExpand(segments + 1)
 
-	// are we in sequence? 
+	// are we in sequence?
 	if pageno != ot.pageNo {
 
-		// unroll previous partial packet (if any) 
+		// unroll previous partial packet (if any)
 		for i := ot.lacingPacket; i < ot.lacingFill; i++ {
 			ot.bodyFill -= int(ot.lacingVals[i]) & 0xff
 		}
 		ot.lacingFill = ot.lacingPacket
 
-		// make a note of dropped data in segment table 
+		// make a note of dropped data in segment table
 		if ot.pageNo != -1 {
 			ot.lacingVals[ot.lacingFill] = 0x400
 			ot.lacingFill++
@@ -788,7 +788,7 @@ func (ot *StreamState) PageIn(og *Page) error {
 	}
 
 	// are we a 'continued packet' page?  If so, we may need to skip
-	// some segments 
+	// some segments
 	if continued == true {
 		if ot.lacingFill < 1 || ot.lacingVals[ot.lacingFill-1] == 0x400 {
 			bos = false
@@ -833,7 +833,7 @@ func (ot *StreamState) PageIn(og *Page) error {
 			}
 		}
 
-		// set the granulepos on the last granuleval of the last full packet 
+		// set the granulepos on the last granuleval of the last full packet
 		if saved != -1 {
 			ot.granuleVals[saved] = granulepos
 		}
@@ -896,7 +896,7 @@ func (ot *StreamState) packetOut(op *Packet, adv bool) int {
 	}
 
 	// we need to tell the codec there's a gap; it might need to
-	// handle previous packet dependencies. 
+	// handle previous packet dependencies.
 	if (ot.lacingVals[ptr] & 0x400) != 0 {
 		ot.lacingReturned++
 		ot.packetNo++
@@ -904,12 +904,12 @@ func (ot *StreamState) packetOut(op *Packet, adv bool) int {
 	}
 
 	// just using peek as an inexpensive way
-	// to ask if there's a whole packet waiting 
+	// to ask if there's a whole packet waiting
 	if op == nil && adv == false {
 		return 1
 	}
 
-	// Gather the whole packet. We'll have no holes or a partial packet 
+	// Gather the whole packet. We'll have no holes or a partial packet
 	{
 		size := int(ot.lacingVals[ptr] & 0xff)
 		Bytes := size

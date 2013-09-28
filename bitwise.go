@@ -1,22 +1,21 @@
 package ogg
 
 /********************************************************************
- *                                                                  *
- * THIS FILE IS PART OF THE Ogg CONTAINER SOURCE CODE.              *
- * USE, DISTRIBUTION AND REPRODUCTION OF THIS LIBRARY SOURCE IS     *
- * GOVERNED BY A BSD-STYLE SOURCE LICENSE INCLUDED WITH THIS SOURCE *
- * IN 'COPYING'. PLEASE READ THESE TERMS BEFORE DISTRIBUTING.       *
- *                                                                  *
- * THE OggVorbis SOURCE CODE IS (C) COPYRIGHT 1994-2010             *
- * by the Xiph.Org Foundation http://www.xiph.org/                  *
- *                                                                  *
- ********************************************************************
+*                                                                  *
+* THIS FILE IS PART OF THE Ogg CONTAINER SOURCE CODE.              *
+* USE, DISTRIBUTION AND REPRODUCTION OF THIS LIBRARY SOURCE IS     *
+* GOVERNED BY A BSD-STYLE SOURCE LICENSE INCLUDED WITH THIS SOURCE *
+* IN 'COPYING'. PLEASE READ THESE TERMS BEFORE DISTRIBUTING.       *
+*                                                                  *
+* THE OggVorbis SOURCE CODE IS (C) COPYRIGHT 1994-2010             *
+* by the Xiph.Org Foundation http://www.xiph.org/                  *
+*                                                                  *
+********************************************************************
 
-  function: packing variable sized words into an octet stream
-  last mod: $Id: bitwise.c 18051 2011-08-04 17:56:39Z giles $
+ function: packing variable sized words into an octet stream
+ last mod: $Id: bitwise.c 18051 2011-08-04 17:56:39Z giles $
 
- ********************************************************************/
-
+********************************************************************/
 
 // function: Packing variable sized words into an octet stream
 
@@ -103,7 +102,7 @@ func (b *PackBuffer) WriteTruncB(bits int32) {
 	}
 }
 
-// Takes only up to 32 bits. 
+// Takes only up to 32 bits.
 func (b *PackBuffer) Write(value uint32, bits int8) {
 	if bits < 0 || bits > 32 {
 		goto err
@@ -149,7 +148,7 @@ err:
 	b.WriteClear()
 }
 
-// Takes only up to 32 bits. 
+// Takes only up to 32 bits.
 func (b *PackBuffer) WriteB(value uint32, bits int8) {
 	if bits < 0 || bits > 32 {
 		goto err
@@ -224,12 +223,12 @@ func (b *PackBuffer) writeCopyHelper(source []byte, bits int8, msb bool) {
 
 	if b.endbit != 0 {
 		var i int8
-		// unaligned copy.  Do it the hard way. 
+		// unaligned copy.  Do it the hard way.
 		for i = 0; i < _bytes; i++ {
 			b.handlerFunc(uint32(ptr[i]), 8, msb)
 		}
 	} else {
-		// aligned block copy 
+		// aligned block copy
 		if b.endbyte+int32(_bytes+1) >= int32(len(b.buffer)) {
 			if b.ptr == nil {
 				goto err
@@ -302,7 +301,7 @@ func (b *PackBuffer) ReadInitB(buf []byte) {
 	b.ReadInit(buf)
 }
 
-// Read in bits without advancing the bitptr; bits <= 32 
+// Read in bits without advancing the bitptr; bits <= 32
 func (b *PackBuffer) Look(bits int8) int32 {
 	var ret, m uint32
 
@@ -313,10 +312,10 @@ func (b *PackBuffer) Look(bits int8) int32 {
 	bits += b.endbit
 
 	if b.endbyte >= int32(len(b.buffer)-4) {
-		// not the main path 
+		// not the main path
 		if b.endbyte > int32(len(b.buffer))-int32((bits+7)>>3) {
 			// special case to afunc reading b.ptr[0], which might be past
-			// the end of the buffer; also skips some useless accounting 
+			// the end of the buffer; also skips some useless accounting
 			return -1
 		} else if bits == 0 {
 			return 0
@@ -350,11 +349,11 @@ func (b *PackBuffer) LookB(bits int8) int32 {
 	bits += b.endbit
 
 	if b.endbyte >= int32(len(b.buffer)-4) {
-		// not the main path 
+		// not the main path
 		if b.endbyte > int32(len(b.buffer))-int32((bits+7)>>3) {
 			return -1
 			// special case to afunc reading b.ptr[0], which might be past
-			// the end of the buffer; also skips some useless accounting 
+			// the end of the buffer; also skips some useless accounting
 		} else if bits == 0 {
 			return 0
 		}
@@ -425,10 +424,10 @@ func (b *PackBuffer) Adv1B() {
 	b.Adv1()
 }
 
-// bits <= 32 
+// bits <= 32
 func (b *PackBuffer) Read(bits int8) int32 {
 	var ret, m uint32
-	
+
 	if bits < 0 || bits > 32 {
 		goto err
 	}
@@ -436,11 +435,11 @@ func (b *PackBuffer) Read(bits int8) int32 {
 	bits += b.endbit
 
 	if b.endbyte >= int32(len(b.buffer)-4) {
-		// not the main path 
-		if b.endbyte > int32(len(b.buffer)) - int32((bits+7)>>3) {
+		// not the main path
+		if b.endbyte > int32(len(b.buffer))-int32((bits+7)>>3) {
 			goto overflow
-			// special case to afunc reading b.ptr[0], which might be past 
-			// the end of the buffer; also skips some useless accounting 
+			// special case to afunc reading b.ptr[0], which might be past
+			// the end of the buffer; also skips some useless accounting
 		} else if bits == 0 {
 			return 0
 		}
@@ -474,7 +473,7 @@ err:
 	return -1
 }
 
-// bits <= 32 
+// bits <= 32
 func (b *PackBuffer) ReadB(bits int8) int32 {
 	var ret uint32
 	m := int32(32 - bits)
@@ -485,11 +484,11 @@ func (b *PackBuffer) ReadB(bits int8) int32 {
 	bits += b.endbit
 
 	if b.endbyte+4 >= int32(len(b.buffer)) {
-		// not the main path 
+		// not the main path
 		if b.endbyte > int32(len(b.buffer))-int32((bits+7)>>3) {
 			goto overflow
-			// special case to afunc reading b.ptr[0], which might be past 
-			// the end of the buffer; also skips some useless accounting 
+			// special case to afunc reading b.ptr[0], which might be past
+			// the end of the buffer; also skips some useless accounting
 		} else if bits == 0 {
 			return 0
 		}
@@ -508,7 +507,7 @@ func (b *PackBuffer) ReadB(bits int8) int32 {
 			}
 		}
 	}
-	ret = ((ret&0xffffffff) >> uint(m >> 1)) >> uint((m + 1) >> 1)
+	ret = ((ret & 0xffffffff) >> uint(m>>1)) >> uint((m+1)>>1)
 	b.ptr = b.ptr[bits/8:]
 	b.endbyte += int32(bits / 8)
 	b.endbit = bits & 7
